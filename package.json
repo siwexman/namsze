@@ -1,0 +1,30 @@
+{
+    "name": "namsze",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "clean": "rm -rf dist",
+        "build": "npm run clean && npx tsc",
+        "start": "node dist/server.js",
+        "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts"
+    },
+    "dependencies": {
+        "cookie-parser": "~1.4.4",
+        "debug": "~2.6.9",
+        "dotenv": "^17.2.3",
+        "express": "^4.22.1",
+        "http": "^0.0.1-security",
+        "http-errors": "~1.6.3",
+        "mongodb": "^7.0.0",
+        "mongoose": "^9.0.1",
+        "morgan": "^1.10.1",
+        "pug": "^3.0.3"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.6",
+        "@types/node": "^25.0.0",
+        "nodemon": "^3.1.11",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.3"
+    }
+}
