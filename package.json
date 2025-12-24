@@ -6,7 +6,8 @@
         "clean": "rm -rf dist",
         "build": "npm run clean && npx tsc",
         "start": "node dist/server.js",
-        "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts"
+        "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
+        "db:import": "npx ts-node src/dev-data/seeder.ts"
     },
     "dependencies": {
         "cookie-parser": "~1.4.4",

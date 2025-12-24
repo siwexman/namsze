@@ -41,6 +41,6 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true
     },
-    "include": ["src/**/*.ts"],
+    "include": ["src/**/*.ts", "src/dev-data/seeder.ts"],
     "exclude": ["dist", "node_modules"]
 }

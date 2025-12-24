@@ -1,9 +1,7 @@
-import { Schema, Document, Types, model } from 'mongoose';
+import { Schema, Document, model } from 'mongoose';
 
-import { IMass } from './Mass';
-
-interface IParrish extends Document {
-    dedicatedTo: string;
+export interface IChurch extends Document {
+    name: string;
     city: string;
     address: string;
     location: {
@@ -12,27 +10,29 @@ interface IParrish extends Document {
     };
     isCathedral?: boolean;
     image: string;
-    masses?: IMass[];
 }
 
-const parrishSchema = new Schema<IParrish>(
+const churchSchema = new Schema<IChurch>(
     {
         // dedicated to = pod wezwaniem
-        dedicatedTo: {
+        name: {
             type: String,
-            required: [true, 'A parrish must have a dedication'],
+            required: [true, 'A church must have a dedication/name'],
             trim: true,
-            match: [/^[a-zA-Z\s]+$/, 'A parrish can only contain letters'],
+            match: [
+                /^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s.]+$/,
+                'A church can only contain letters',
+            ],
         },
         city: {
             type: String,
-            required: [true, 'A parrish must have a city'],
+            required: [true, 'A church must have a city'],
             trim: true,
         },
         // street number || number (if no street)
         address: {
             type: String,
-            required: [true, 'A parrish must have a address'],
+            required: [true, 'A church must have a address'],
         },
         location: {
             // GeoJSON
@@ -43,7 +43,7 @@ const parrishSchema = new Schema<IParrish>(
             },
             coordinates: {
                 type: [Number],
-                required: [true, 'A parrish must have a location'],
+                required: [true, 'A church must have a location'],
             },
         },
         isCathedral: {
@@ -60,13 +60,13 @@ const parrishSchema = new Schema<IParrish>(
     }
 );
 
-parrishSchema.index({ location: '2dsphere' });
+churchSchema.index({ location: '2dsphere' });
 
-parrishSchema.virtual('mass', {
+churchSchema.virtual('mass', {
     ref: 'Mass',
     localField: '_id',
-    foreignField: 'parrish',
+    foreignField: 'church',
     options: { sort: { time: 1 } },
 });
 
-export const Parrish = model<IParrish>('Parrish', parrishSchema);
+export const Church = model<IChurch>('Church', churchSchema);

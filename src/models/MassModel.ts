@@ -1,10 +1,10 @@
-import mongoose, { Schema, Document, model, Types } from 'mongoose';
+import { Schema, Document, model, Types } from 'mongoose';
 
 export interface IMass extends Document {
     time: string;
     day: 'sunday' | 'weekday';
     description: string;
-    parrish: Types.ObjectId;
+    church: Types.ObjectId;
 }
 
 const massSchema = new Schema<IMass>({
@@ -25,12 +25,14 @@ const massSchema = new Schema<IMass>({
     description: {
         type: String,
     },
-    parrish: {
+    church: {
         type: Types.ObjectId,
-        ref: 'Parrish',
+        ref: 'Church',
         required: true,
     },
 });
+
+massSchema.index({ church: 1 });
 
 massSchema.pre<IMass>('validate', async function (this: IMass) {
     if (

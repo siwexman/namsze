@@ -1,15 +1,11 @@
 import express from 'express';
-import connectDB from './config/db';
+import router from './routes/churchRoute';
 
 const app = express();
-
-connectDB();
 
 app.use(express.json());
 
 // ROUTES
-app.get('/', (req, res) => {
-    res.send('API is running with TypeScript and MongoDB!');
-});
+app.get('/', router);
 
 export default app;
