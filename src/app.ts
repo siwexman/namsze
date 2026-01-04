@@ -1,11 +1,13 @@
 import express from 'express';
-import router from './routes/churchRoute';
+import churchRouter from './routes/churchRoute';
+import massRouter from './routes/massRoute';
 
 const app = express();
 
 app.use(express.json());
 
 // ROUTES
-app.get('/', router);
+app.use('/api/v1/churches', churchRouter);
+app.use('/api/v1/masses', massRouter);
 
 export default app;

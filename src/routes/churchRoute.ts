@@ -1,16 +1,29 @@
-import express, { Router } from 'express';
-import { Church } from '../models/ChurchModel';
+import { Router } from 'express';
 
-const router = express.Router();
+import {
+    deleteChurch,
+    getAllChurches,
+    getChurch,
+    getChurchWithMasses,
+    getNearChurchesWtihMasses,
+    updateChurch,
+} from '../controllers/churchController';
+import massRouter from './massRoute';
+
+const router = Router();
 
 // ROUTES
 // GET POST All church
-router.route('/churches').get().post();
+router.route('/').get(getAllChurches);
 
 // GET PATCH DELETE One church
-router.route('churches/:id').get().patch().delete();
+router.route('/:id').get(getChurch).patch(updateChurch).delete(deleteChurch);
 
 // GET Based on user's localisation all churches
-router.route('churches/near-me/:latlng').get();
+router.route('/near-me/:latlng/time/:time').get(getNearChurchesWtihMasses);
+
+// GET Church and Masses
+router.route('/:churchId/masses').get(getChurchWithMasses);
+// router.use('/:churchId/masses', massRouter);
 
 export default router;

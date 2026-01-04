@@ -62,11 +62,13 @@ const churchSchema = new Schema<IChurch>(
 
 churchSchema.index({ location: '2dsphere' });
 
-churchSchema.virtual('mass', {
+churchSchema.virtual('masses', {
     ref: 'Mass',
     localField: '_id',
     foreignField: 'church',
     options: { sort: { time: 1 } },
 });
+
+// churchSchema.pre();
 
 export const Church = model<IChurch>('Church', churchSchema);

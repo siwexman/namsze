@@ -22,7 +22,7 @@ async function importData() {
         console.log('Connected to DB');
 
         const jsonFile = fs.readFileSync(
-            path.join(__dirname, 'church.json'),
+            path.join(__dirname, 'churches.json'),
             'utf-8'
         );
         const churchArray = JSON.parse(jsonFile);
