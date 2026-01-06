@@ -1,3 +1,4 @@
+import { NextFunction } from 'express';
 import { Schema, Document, model } from 'mongoose';
 
 export interface IChurch extends Document {
@@ -66,9 +67,19 @@ churchSchema.virtual('masses', {
     ref: 'Mass',
     localField: '_id',
     foreignField: 'church',
-    options: { sort: { time: 1 } },
+    options: { sort: { day: 1, time: 1 } },
 });
 
-// churchSchema.pre();
+churchSchema.post('findOneAndDelete', async function (doc, next) {
+    if (doc) {
+        const masses = await model('Mass').deleteMany({ church: doc._id });
+
+        console.log(
+            `Deleted church ${doc._id} with ${masses.deletedCount} masses`
+        );
+    }
+
+    next();
+});
 
 export const Church = model<IChurch>('Church', churchSchema);

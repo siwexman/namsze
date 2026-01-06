@@ -1,3 +1,4 @@
+import { NextFunction } from 'express';
 import { Schema, Document, model, Types } from 'mongoose';
 
 export interface IMass extends Document {
@@ -33,22 +34,5 @@ const massSchema = new Schema<IMass>({
 });
 
 massSchema.index({ church: 1 });
-
-massSchema.pre<IMass>('validate', async function (this: IMass) {
-    if (
-        this.time &&
-        typeof this.isModified === 'function' &&
-        this.isModified('time')
-    ) {
-        const timeParts = this.time.trim().split(':');
-
-        if (timeParts.length === 2) {
-            const hours = timeParts[0]?.padStart(2, '0');
-            const minutes = timeParts[1]?.padStart(2, '0');
-
-            this.time = `${hours}:${minutes}`;
-        }
-    }
-});
 
 export const Mass = model<IMass>('Mass', massSchema);

@@ -38,7 +38,8 @@ export const getAll = <T>(Model: Model<T>) =>
             .filter()
             .sort()
             .limitFields()
-            .paginate();
+            .paginate()
+            .contains();
 
         const doc = await features.query;
 
