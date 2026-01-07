@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import {
+    createChurch,
     deleteChurch,
     getAllChurches,
     getChurch,
@@ -8,13 +9,12 @@ import {
     getNearChurchesWtihMasses,
     updateChurch,
 } from '../controllers/churchController';
-import massRouter from './massRoute';
 
 const router = Router();
 
 // ROUTES
 // GET POST All church
-router.route('/').get(getAllChurches);
+router.route('/').get(getAllChurches).post(createChurch);
 
 // GET PATCH DELETE One church
 router.route('/:id').get(getChurch).patch(updateChurch).delete(deleteChurch);

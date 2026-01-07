@@ -1,7 +1,9 @@
 import { NextFunction } from 'express';
 import { Schema, Document, model } from 'mongoose';
+import { IMass } from './MassModel';
 
 export interface IChurch extends Document {
+    // dedicatedTo: string;
     name: string;
     city: string;
     address: string;
@@ -15,14 +17,25 @@ export interface IChurch extends Document {
 
 const churchSchema = new Schema<IChurch>(
     {
+        /*
         // dedicated to = pod wezwaniem
+        // zmienić z 'name'. 'name' jako nazwa inna niż pw. np. Bazylika oo. Bernardynów dodatkowo obowiązkowe pole 'dedicatedTo'
+        */
+        // dedicatedTo: {
+        //     type: String,
+        //     trim: true,
+        //     match: [
+        //         /^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s.]+$/,
+        //         'A name can only contain letters',
+        //     ],
+        // },
         name: {
             type: String,
             required: [true, 'A church must have a dedication/name'],
             trim: true,
             match: [
                 /^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s.]+$/,
-                'A church can only contain letters',
+                'A name can only contain letters',
             ],
         },
         city: {

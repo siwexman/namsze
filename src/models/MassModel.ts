@@ -11,7 +11,7 @@ export interface IMass extends Document {
 const massSchema = new Schema<IMass>({
     time: {
         type: String,
-        required: [true, 'A mass must have a time (HH:MM)'],
+        required: [true, 'A mass must have a time (HH:mm)'],
         validate: {
             validator: (v: string) =>
                 /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/.test(v),
