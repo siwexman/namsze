@@ -20,7 +20,7 @@ router.route('/').get(getAllChurches).post(createChurch);
 router.route('/:id').get(getChurch).patch(updateChurch).delete(deleteChurch);
 
 // GET Based on user's localisation all churches
-router.route('/near-me/:latlng/time/:time').get(getNearChurchesWtihMasses);
+router.route('/near-me/:latlng').get(getNearChurchesWtihMasses);
 
 // GET Church and Masses
 router.route('/:churchId/masses').get(getChurchWithMasses);

@@ -10,6 +10,7 @@
         "db:import": "npx ts-node src/dev-data/seeder.ts"
     },
     "dependencies": {
+        "axios": "^1.13.2",
         "cookie-parser": "~1.4.4",
         "debug": "~2.6.9",
         "dotenv": "^17.2.3",
