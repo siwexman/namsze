@@ -71,10 +71,11 @@ const churchSchema = new Schema<IChurch>(
     {
         toJSON: { virtuals: true },
         toObject: { virtuals: true },
-    }
+    },
 );
 
 churchSchema.index({ location: '2dsphere' });
+churchSchema.index({ city: 1 });
 
 churchSchema.virtual('masses', {
     ref: 'Mass',
@@ -88,7 +89,7 @@ churchSchema.post('findOneAndDelete', async function (doc, next) {
         const masses = await model('Mass').deleteMany({ church: doc._id });
 
         console.log(
-            `Deleted church ${doc._id} with ${masses.deletedCount} masses`
+            `Deleted church ${doc._id} with ${masses.deletedCount} masses`,
         );
     }
 

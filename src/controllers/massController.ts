@@ -6,7 +6,7 @@ import {
     getAll,
     getOne,
     updateOne,
-} from './handlerFactory';
+} from './helpers/handlerFactory';
 
 export const getAllMasses = getAll(Mass);
 

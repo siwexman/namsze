@@ -4,9 +4,11 @@ import {
     deleteOne,
     getAll,
     getNearChurchesWithMasses,
+    getChurchesByMass,
     getOne,
     updateOne,
-} from './handlerFactory';
+    getCitiesAutoComplete,
+} from './helpers/handlerFactory';
 
 import { Church } from '../models/ChurchModel';
 
@@ -18,12 +20,17 @@ export const updateChurch = updateOne(Church);
 
 export const createChurch = createOne(Church);
 
+export const getAllChurches = getAll(Church);
+
 export const getChurchWithMasses = getOne(
     Church,
     { path: 'masses' },
-    'churchId'
+    'churchId',
 );
 
-export const getAllChurches = getAll(Church);
+export const getChurchesMasses = getChurchesByMass;
 
-export const getNearChurchesWtihMasses = getNearChurchesWithMasses;
+export const getNearChurchesMasses = getNearChurchesWithMasses;
+
+// User Inputs auto-complete
+export const getCities = getCitiesAutoComplete;
