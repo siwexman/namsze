@@ -1,0 +1,70 @@
+import { model, Schema, Types } from 'mongoose';
+
+export interface IRecurringConfession extends Document {
+    dayOfWeek: number; // 0 - 6 (sunday - saturday)
+    startTime: string; // HH:mm format
+    endTime: string;
+    church: Types.ObjectId;
+}
+
+export interface ILiveConfession extends Document {
+    expireAt: Date;
+    church: Types.ObjectId;
+    // reportedBy: Types.ObjectId  -- user
+}
+
+const recurringConfessionSchema = new Schema<IRecurringConfession>({
+    dayOfWeek: {
+        type: Number,
+        required: [true, 'A recurring confession must have a day'],
+        match: [/^[0-6]/, 'A confession can only cantain number 0 - 6'],
+    },
+    startTime: {
+        type: String,
+        required: [true, 'A confession must have a start time (HH:mm)'],
+        validate: {
+            validator: (v: string) =>
+                /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/.test(v),
+            message: 'Time must be in HH:mm format (e.g. 09:30)',
+        },
+    },
+    endTime: {
+        type: String,
+        required: [true, 'A confession must have a end time (HH:mm)'],
+        validate: {
+            validator: (v: string) =>
+                /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/.test(v),
+            message: 'Time must be in HH:mm format (e.g. 09:30)',
+        },
+    },
+    church: {
+        type: Types.ObjectId,
+        ref: 'Church',
+        required: true,
+    },
+});
+
+const liveConfessionSchema = new Schema<ILiveConfession>({
+    expireAt: {
+        type: Date,
+        default: Date.now() + 30 * 60 * 1000, // +30 min
+        required: [true, 'A live confession must have a datetime'],
+    },
+    church: {
+        type: Types.ObjectId,
+        ref: 'Church',
+        required: true,
+    },
+});
+
+liveConfessionSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
+
+export const RecurringConfession = model<IRecurringConfession>(
+    'RecurringConfession',
+    recurringConfessionSchema,
+);
+
+export const LiveConfession = model<ILiveConfession>(
+    'LiveConfession',
+    liveConfessionSchema,
+);

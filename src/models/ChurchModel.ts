@@ -1,6 +1,4 @@
-import { NextFunction } from 'express';
 import { Schema, Document, model } from 'mongoose';
-import { IMass } from './MassModel';
 
 export interface IChurch extends Document {
     // dedicatedTo: string;

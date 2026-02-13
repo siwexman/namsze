@@ -1,4 +1,3 @@
-import { NextFunction } from 'express';
 import { Schema, Document, model, Types } from 'mongoose';
 
 export interface IMass extends Document {
