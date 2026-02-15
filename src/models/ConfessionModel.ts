@@ -1,4 +1,4 @@
-import { model, Schema, Types } from 'mongoose';
+import { model, Schema, Types, Document } from 'mongoose';
 
 export interface IRecurringConfession extends Document {
     dayOfWeek: number; // 0 - 6 (sunday - saturday)
@@ -32,9 +32,14 @@ const recurringConfessionSchema = new Schema<IRecurringConfession>({
         type: String,
         required: [true, 'A confession must have a end time (HH:mm)'],
         validate: {
-            validator: (v: string) =>
-                /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/.test(v),
-            message: 'Time must be in HH:mm format (e.g. 09:30)',
+            validator: function (this: any, v: string): boolean {
+                if (this.startTime === v) {
+                    return false;
+                }
+
+                return this.startTime < v;
+            },
+            message: 'End Time must be grater than start Time',
         },
     },
     church: {

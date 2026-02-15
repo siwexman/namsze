@@ -1,9 +1,7 @@
-import axios from 'axios';
-
-import { Church, IChurch } from '../../models/ChurchModel';
+import { NextFunction, Request } from 'express';
 import { MassFilter, ParamQuery } from './types';
-import { NextFunction } from 'express';
 import { AppError } from '../../utils/appError';
+import { PipelineStage } from 'mongoose';
 
 export function changeToCammelCase(kebabCase: string) {
     return kebabCase.replace(/-([a-z])/g, (match, letter) =>
@@ -86,6 +84,7 @@ export function filterMass(
             ? 'sunday'
             : 'weekday'
         : 'sunday';
+    massFilter.dayOfWeek = day ? Number(day) : 0;
 
     if (time) {
         if (typeof time === 'object') {
@@ -105,112 +104,48 @@ export function filterMass(
     return massFilter;
 }
 
-/**
- * Fetch data from OpenRouteService API to calculate distance, duration of route and route for 2 profiles (car, walk).
- * @param church Church model from db
- * @param startLocation coordinates in foramt longitude,latitude
- * @returns Church with both profiles data as one object
- */
-export async function fetchAllData(church: IChurch, startLocation: string) {
-    // Profiles for driving car and walking
-    const profiles = ['driving-car', 'foot-walking'];
+export function getChurchesPipline(req: Request, next: NextFunction) {
+    const { time } = req.params;
+    const { day, city, coords, radius } = req.query;
 
-    try {
-        const profilesData = await Promise.all(
-            profiles.map(async profile => {
-                const orsRes = await axios.get(
-                    `https://api.openrouteservice.org/v2/directions/${profile}`,
-                    {
-                        params: {
-                            api_key: process.env.OPENROUTESERVICE_API_KEY,
-                            start: startLocation,
-                            end: church.location.coordinates.join(','),
-                        },
-                    },
-                );
-
-                return {
-                    [changeToCammelCase(profile)]: {
-                        distanceFromUser:
-                            orsRes.data.features[0].properties.summary.distance, // distance in meters
-                        duration:
-                            orsRes.data.features[0].properties.summary.duration, // duration in seconds
-                        // route: orsRes.data.features[0].geometry, // GeoJSON for the path
-                    },
-                };
-            }),
-        );
-
-        const mergedProfiles = profilesData.reduce((acc, current) => {
-            return { ...acc, ...current };
-        }, {});
-
-        return {
-            ...church,
-            profilesData: mergedProfiles,
-        };
-    } catch (error) {
-        return {
-            ...church,
-            profilesData: { error: "Couldn't find distance or duration" },
-        };
+    if (!city && !coords) {
+        next(new AppError('Please provide coordinates or city!', 404));
     }
-}
 
-/**
- * Function to filter churches and masses near coords within radius
- * @param lng Longitude of coordinates
- * @param lat Latitude of coordinates
- * @param radius Radius
- * @param massFilter Object used to filter masses
- * @returns IChurch[] in center of coords and given radius with filtered masses
- */
-export async function getChurchesWithin(
-    lng: number,
-    lat: number,
-    radius: number,
-    massFilter: MassFilter,
-) {
-    let churches: IChurch[] = [];
-    const maxDistanceMeters = radius * 1000;
+    const queryRadius = coords && !radius ? 5 : Number(radius?.toString());
 
-    churches = await Church.aggregate([
-        {
+    const massFilter = filterMass(day?.toString(), time?.toString(), next);
+
+    let pipelineChurch: PipelineStage;
+
+    if (coords) {
+        const [lat = 0, lng = 0] = checkCoordinates(coords, next) ?? [];
+
+        pipelineChurch = {
             $geoNear: {
-                near: { type: 'Point', coordinates: [lng, lat] },
+                near: {
+                    type: 'Point',
+                    coordinates: [lng, lat],
+                },
                 distanceField: 'distance',
-                maxDistance: maxDistanceMeters,
+                maxDistance: queryRadius * 1000,
                 spherical: true,
             },
-        },
-        {
-            $lookup: {
-                from: 'masses',
-                localField: '_id',
-                foreignField: 'church',
-                pipeline: [
-                    {
-                        $match: massFilter,
-                    },
-                    {
-                        $unset: ['__v', 'church'],
-                    },
-                ],
-                as: 'masses',
-            },
-        },
-        {
-            $match: {
-                'masses.0': { $exists: true },
-            },
-        },
-        {
-            $unset: '__v',
-        },
-        {
-            $sort: { distance: 1 },
-        },
-    ]).limit(15);
+        };
+    } else {
+        pipelineChurch = {
+            $match: { city },
+        };
+    }
 
-    return churches;
+    const [hours, minutes] = massFilter.time.split(':');
+    const timeFilter =
+        minutes === '00' ? { $regex: `^${hours}:` } : massFilter.time;
+    const pipelineTime = { $match: { time: timeFilter, day: massFilter.day } };
+
+    return {
+        pipelineChurch,
+        pipelineTime,
+        massFilter,
+    };
 }
