@@ -1,13 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
 import { createOne, deleteOne, updateOne } from './helpers/handlerFactory';
 
-import { LiveConfession, RecurringConfession } from '../models/ConfessionModel';
+import {
+    SingleConfession,
+    RecurringConfession,
+} from '../models/ConfessionModel';
 
 // LIVE CONFESSIONS
 
-export const createLiveConfession = createOne(LiveConfession);
+export const createSingleConfession = createOne(SingleConfession);
 
-export const deleteLiveConfession = deleteOne(LiveConfession);
+export const deleteSingleConfession = deleteOne(SingleConfession);
 
 // RECURRING CONFESSIONS
 

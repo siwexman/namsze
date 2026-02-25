@@ -1,7 +1,7 @@
 import { Schema, Document, model } from 'mongoose';
 
 export interface IChurch extends Document {
-    // dedicatedTo: string;
+    dedicatedTo: string;
     name: string;
     city: string;
     address: string;
@@ -19,14 +19,14 @@ const churchSchema = new Schema<IChurch>(
         // dedicated to = pod wezwaniem
         // zmienić z 'name'. 'name' jako nazwa inna niż pw. np. Bazylika oo. Bernardynów dodatkowo obowiązkowe pole 'dedicatedTo'
         */
-        // dedicatedTo: {
-        //     type: String,
-        //     trim: true,
-        //     match: [
-        //         /^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s.]+$/,
-        //         'A name can only contain letters',
-        //     ],
-        // },
+        dedicatedTo: {
+            type: String,
+            trim: true,
+            match: [
+                /^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s.]+$/,
+                'A name can only contain letters',
+            ],
+        },
         name: {
             type: String,
             required: [true, 'A church must have a dedication/name'],
@@ -82,7 +82,7 @@ churchSchema.virtual('masses', {
     options: { sort: { day: 1, time: 1 } },
 });
 
-churchSchema.virtual('recurringconfessions', {
+churchSchema.virtual('recurringConfessions', {
     ref: 'RecurringConfession',
     localField: '_id',
     foreignField: 'church',

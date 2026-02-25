@@ -114,7 +114,7 @@ export async function getChurchesWithin(
         },
         {
             $lookup: {
-                from: 'liveconfessions',
+                from: 'singleConfessions',
                 let: { church_id: '$_id' },
                 pipeline: [
                     {
@@ -134,7 +134,7 @@ export async function getChurchesWithin(
         },
         {
             $lookup: {
-                from: 'recurringconfessions',
+                from: 'recurringConfessions',
                 let: { church_id: '$_id' },
                 pipeline: [
                     {
@@ -259,7 +259,7 @@ export const getChurchesByConfessions = catchAsync(async (req, res, next) => {
     if (searchTime.getDay() === massFilter.dayOfWeek) {
         pipelineLiveConf = {
             $lookup: {
-                from: 'liveconfessions',
+                from: 'singleConfessions',
                 let: { church_id: '$_id' },
                 pipeline: [
                     {
@@ -286,7 +286,7 @@ export const getChurchesByConfessions = catchAsync(async (req, res, next) => {
         pipelineLiveConf,
         {
             $lookup: {
-                from: 'recurringconfessions',
+                from: 'recurringConfessions',
                 let: { church_id: '$_id' },
                 pipeline: [
                     {

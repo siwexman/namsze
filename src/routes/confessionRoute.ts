@@ -3,19 +3,19 @@ import {
     createRecurringConfession,
     deleteRecurringConfession,
     updateRecurringConfession,
-    createLiveConfession,
-    deleteLiveConfession,
+    createSingleConfession,
+    deleteSingleConfession,
 } from '../controllers/confessionController';
 
 const router = Router({ mergeParams: true });
 
 // LIVE CONFESSIONS
 
-const pathLive = '/live';
+const pathSingle = '/single';
 
-router.route(pathLive).post(createLiveConfession);
+router.route(pathSingle).post(createSingleConfession);
 
-router.route(`${pathLive}/:id`).delete(deleteLiveConfession);
+router.route(`${pathSingle}/:id`).delete(deleteSingleConfession);
 
 // RECURRING CONFESSIONS
 

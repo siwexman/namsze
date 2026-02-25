@@ -21,7 +21,7 @@ export const getChurch = getOne(Church, [
     {
         path: 'masses',
     },
-    { path: 'recurringconfessions' },
+    { path: 'recurringConfessions' },
 ]);
 
 export const deleteChurch = deleteOne(Church);
