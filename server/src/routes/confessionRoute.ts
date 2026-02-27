@@ -6,6 +6,7 @@ import {
     createSingleConfession,
     deleteSingleConfession,
 } from '../controllers/confessionController';
+import { restrictTo } from '../controllers/authController';
 
 const router = Router({ mergeParams: true });
 
@@ -13,19 +14,21 @@ const router = Router({ mergeParams: true });
 
 const pathSingle = '/single';
 
-router.route(pathSingle).post(createSingleConfession);
+router.route(pathSingle).post(restrictTo('user'), createSingleConfession);
 
-router.route(`${pathSingle}/:id`).delete(deleteSingleConfession);
+router
+    .route(`${pathSingle}/:id`)
+    .delete(restrictTo('user'), deleteSingleConfession);
 
 // RECURRING CONFESSIONS
 
 const pathRecurring = '/recurring';
 
-router.route(pathRecurring).post(createRecurringConfession);
+router.route(pathRecurring).post(restrictTo('user'), createRecurringConfession);
 
 router
     .route(`${pathRecurring}/:id`)
-    .patch(updateRecurringConfession)
-    .delete(deleteRecurringConfession);
+    .patch(restrictTo('user'), updateRecurringConfession)
+    .delete(restrictTo('user'), deleteRecurringConfession);
 
 export default router;
