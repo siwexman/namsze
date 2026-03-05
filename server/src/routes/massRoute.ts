@@ -10,12 +10,8 @@ import { restrictTo } from '../controllers/authController';
 
 const router = Router({ mergeParams: true });
 
-router.route('/').get(getAllMasses).post(restrictTo('user'), createMass);
+router.route('/').get(getAllMasses).post(createMass);
 
-router
-    .route('/:id')
-    .get(getMass)
-    .patch(restrictTo('user'), updateMass)
-    .delete(restrictTo('user'), deleteMass);
+router.route('/:id').get(getMass).patch(updateMass).delete(deleteMass);
 
 export default router;

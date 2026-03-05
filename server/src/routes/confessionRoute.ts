@@ -14,21 +14,19 @@ const router = Router({ mergeParams: true });
 
 const pathSingle = '/single';
 
-router.route(pathSingle).post(restrictTo('user'), createSingleConfession);
+router.route(pathSingle).post(createSingleConfession);
 
-router
-    .route(`${pathSingle}/:id`)
-    .delete(restrictTo('user'), deleteSingleConfession);
+router.route(`${pathSingle}/:id`).delete(deleteSingleConfession);
 
 // RECURRING CONFESSIONS
 
 const pathRecurring = '/recurring';
 
-router.route(pathRecurring).post(restrictTo('user'), createRecurringConfession);
+router.route(pathRecurring).post(createRecurringConfession);
 
 router
     .route(`${pathRecurring}/:id`)
-    .patch(restrictTo('user'), updateRecurringConfession)
-    .delete(restrictTo('user'), deleteRecurringConfession);
+    .patch(updateRecurringConfession)
+    .delete(deleteRecurringConfession);
 
 export default router;

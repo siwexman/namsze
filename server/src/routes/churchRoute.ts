@@ -6,18 +6,25 @@ import {
     getAllChurches,
     getChurch,
     getChurchesConfessions,
+    getCities,
     getNearChurchesMasses,
     updateChurch,
 } from '../controllers/churchController';
 import { getChurchesByMass } from '../controllers/helpers/churchFactory';
 import { restrictTo } from '../controllers/authController';
+import { upload } from '../utils/multer';
+import { setFilenameToBody } from '../controllers/helpers/handlerFactory';
 
 const router = Router();
 
 // ROUTES
 // GET POST All church
-router.route('/').get(getAllChurches).post(restrictTo('user'), createChurch);
+router
+    .route('/')
+    .get(getAllChurches)
+    .post(upload.single('image'), setFilenameToBody, createChurch);
 
+router.route('/autocomplete').get(getCities);
 // GET Church and Masses
 // GET Churches with masses Based on user's localization
 router.route('/near-me/:latlng').get(getNearChurchesMasses);
@@ -29,11 +36,7 @@ router.route('/by-time/:time').get(getChurchesByMass);
 router.route('/confessions/:time').get(getChurchesConfessions);
 
 // GET PATCH DELETE One church
-router
-    .route('/:id')
-    .get(getChurch)
-    .patch(restrictTo('user'), updateChurch)
-    .delete(restrictTo('user'), deleteChurch);
+router.route('/:id').get(getChurch).patch(updateChurch).delete(deleteChurch);
 
 // GET One church with masses
 // router.route('/:churchId/masses').get(getChurchWithMasses);

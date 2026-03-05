@@ -20,7 +20,7 @@ import { AppError } from '../../utils/appError';
  */
 export async function fetchAllData(church: IChurch, startLocation: string) {
     // Profiles for driving car and walking
-    const profiles = ['driving-car', 'foot-walking'];
+    const profiles = ['driving-car'];
 
     try {
         const profilesData = await Promise.all(
@@ -129,7 +129,7 @@ export async function getChurchesWithin(
                     },
                     { $unset: ['__v', 'church'] },
                 ],
-                as: 'live',
+                as: 'single',
             },
         },
         {
@@ -143,6 +143,7 @@ export async function getChurchesWithin(
                                 $and: [
                                     { $eq: ['$church', '$$church_id'] },
                                     { $eq: ['$dayOfWeek', dayOfWeek] },
+                                    { $gte: ['$startTime', time] },
                                     { $gt: ['$endTime', time] },
                                 ],
                             },
@@ -157,7 +158,7 @@ export async function getChurchesWithin(
             $addFields: {
                 activeConfession: {
                     $arrayElemAt: [
-                        { $concatArrays: ['$live', '$recurring'] },
+                        { $concatArrays: ['$single', '$recurring'] },
                         0,
                     ],
                 },
@@ -168,7 +169,7 @@ export async function getChurchesWithin(
                 'masses.0': { $exists: true },
             },
         },
-        { $unset: ['live', 'recurring', '__v'] },
+        { $unset: ['single', 'recurring', '__v'] },
         {
             $sort: { distance: 1 },
         },

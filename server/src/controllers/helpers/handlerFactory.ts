@@ -5,6 +5,8 @@ import { AppError } from '../../utils/appError';
 import { APIFeatures } from '../../utils/apiFeatures';
 
 import { PopOptions } from './types';
+import { Church } from '../../models/ChurchModel';
+import { NextFunction, Request, Response } from 'express';
 
 export const getOne = <T>(
     Model: Model<T>,
@@ -94,4 +96,32 @@ export const createOne = <T>(Model: Model<T>) =>
         });
     });
 
-export const getCitiesAutoComplete = catchAsync(async (req, res, next) => {});
+export const getCitiesAutoComplete = catchAsync(async (req, res, next) => {
+    const { query } = req.query;
+
+    if (!query || query.toString().length < 2) {
+        return res.json([]);
+    }
+
+    const regex = new RegExp(`^${query}`, 'i');
+
+    const results = await Church.find({ city: regex })
+        .select('city')
+        .limit(5)
+        .lean();
+
+    const uniqueCities = [...new Set(results.map(r => r.city))];
+
+    res.status(200).json(uniqueCities);
+});
+
+export const setFilenameToBody = (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    if (req.file) {
+        req.body.image = req.file.filename;
+    }
+    next();
+};
