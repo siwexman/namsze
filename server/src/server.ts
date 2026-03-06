@@ -8,4 +8,5 @@ connectDB();
 
 app.listen(Number(PORT), HOST, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log(`Server is working on http://${HOST}:${PORT}`);
 });

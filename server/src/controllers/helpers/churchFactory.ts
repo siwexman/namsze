@@ -178,7 +178,6 @@ export async function getChurchesWithin(
     return churches;
 }
 
-// TODO: dokończyć
 export const getChurchesByMass = catchAsync(async (req, res, next) => {
     const { pipelineChurch, pipelineTime } = getChurchesPipline(req, next);
 
@@ -213,7 +212,9 @@ export const getChurchesByMass = catchAsync(async (req, res, next) => {
 
     res.status(200).json({
         results: docs.length,
-        data: docs,
+        data: {
+            data: docs,
+        },
     });
 });
 
