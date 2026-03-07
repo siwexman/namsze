@@ -89,6 +89,13 @@ churchSchema.virtual('recurringConfessions', {
     options: { sort: { dayOfWeek: 1 } },
 });
 
+churchSchema.virtual('singleConfessions', {
+    ref: 'SingleConfession',
+    localField: '_id',
+    foreignField: 'church',
+    options: { sort: '1' },
+});
+
 churchSchema.post('findOneAndDelete', async function (doc, next) {
     if (doc) {
         const masses = await model('Mass').deleteMany({ church: doc._id });
